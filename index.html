@@ -6,32 +6,167 @@
   <script id="challenge">
     // 👉 CHALLENGE 1
     function profileActivation(profile, reason) {
+      // Case 1: Active profile without reason provided
+      if (profile.active && reason === undefined) {
+        return "confirm status manually";
+      }
 
+      // Case 2: Active profile with reason provided (deactivate)
+      if (profile.active) {
+        return {
+          active: false,
+          reason: reason
+        };
+      }
+
+      // Case 3: Inactive profile (activate)
+      if (!profile.active) {
+        var activatedProfile = {
+          active: true
+        };
+        
+        // Copy all properties except 'reason' and 'active'
+        for (var key in profile) {
+          if (key !== 'reason' && key !== 'active') {
+            activatedProfile[key] = profile[key];
+          }
+        }
+        
+        return activatedProfile;
+      }
     }
 
     // 👉 CHALLENGE 2
     function mineSweeper(grid, x, y) {
-
+      // Check if coordinates are valid
+      if (x < 1 || x > 3 || y < 1 || y > 3) {
+        return "invalid coordinates";
+      }
+      
+      // Adjust coordinates to match array indices (0-based)
+      let gridX = x - 1;
+      let gridY = y - 1;
+      
+      // Check the spot and return appropriate result
+      if (grid[gridY][gridX] === "🟥") {
+        return "🟥 💀";
+      } else if (grid[gridY][gridX] === "🟦") {
+        return "🟦 🥳";
+      }
     }
 
     // 👉 CHALLENGE 3
     function booleanize(obj) {
-
+      // Check for property names longer than 9 characters
+      for (let key in obj) {
+        if (key.length > 9) {
+          return "shorten all prop names to 9 chars or less";
+        }
+      }
+      
+      // Create a new object to store the result
+      let result = {};
+      
+      // Loop through each property in the object
+      for (let key in obj) {
+        let value = obj[key];
+        
+        // Apply transformations based on the value
+        if (value === 0) {
+          result[key] = false;
+        } else if (value === 1) {
+          result[key] = true;
+        } else if (value === null) {
+          // Skip null values (effectively deleting the property)
+          continue;
+        } else {
+          // Keep other values unchanged
+          result[key] = value;
+        }
+      }
+      
+      return result;
     }
 
     // 👉 CHALLENGE 4
     function scrub(text, forbidden) {
+      // If text is empty or no forbidden words, return original text
+      if (text === '' || forbidden.length === 0) {
+        return text;
+      }
 
+      // Split the text into words
+      let words = text.split(' ');
+      let scrubbedWords = [];
+
+      // Process each word
+      for (let i = 0; i < words.length; i++) {
+        let word = words[i];
+        let isForbidden = false;
+
+        // Check if the word (converted to lowercase) is in the forbidden array
+        for (let j = 0; j < forbidden.length; j++) {
+          if (word.toLowerCase() === forbidden[j].toLowerCase()) {
+            // If found, replace with 'x' characters of the same length
+            scrubbedWords.push('x'.repeat(word.length));
+            isForbidden = true;
+            break;
+          }
+        }
+
+        // If the word is not forbidden, keep it as is
+        if (!isForbidden) {
+          scrubbedWords.push(word);
+        }
+      }
+
+      // Join the words back into a string
+      return scrubbedWords.join(' ');
     }
 
     // 👉 CHALLENGE 5 (bonus, NOT graded)
     function normalizePhoneNumber(num) {
+      // Check if the input is exactly 10 digits long
+      if (num.length !== 10 || !/^\d{10}$/.test(num)) {
+        return "Invalid input: must be exactly 10 digits";
+      }
 
+      // Create the template
+      let template = "(XXX) XXX-XXXX";
+      
+      // Loop backwards through the template, replacing 'X' with digits from num
+      for (let i = num.length - 1, j = template.length - 1; j >= 0; j--) {
+        if (template[j] === 'X') {
+          template = template.substring(0, j) + num[i] + template.substring(j + 1);
+          i--;
+        }
+      }
+
+      return template;
     }
 
     // 👉 CHALLENGE 6 (bonus, NOT graded)
     function diceRolls() {
+      let throws = 0;
+      let consecutiveSixes = 0;
 
+      while (true) {
+        throws++;
+        
+        // Simulate rolling a six-sided die
+        let roll = Math.floor(Math.random() * 6) + 1;
+
+        if (roll === 6) {
+          consecutiveSixes++;
+          if (consecutiveSixes === 3) {
+            break; // We've rolled three consecutive sixes
+          }
+        } else {
+          consecutiveSixes = 0; // Reset the count if we don't roll a six
+        }
+      }
+
+      return throws;
     }
 
     // 🧪 DO NOT make any changes below this line ===================
